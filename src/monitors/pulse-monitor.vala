@@ -108,9 +108,15 @@ namespace XimperShellOsd {
                 return;
             }
 
-            if (volume != last_volume || is_muted != last_muted) {
-                last_volume = volume;
-                last_muted = is_muted;
+            bool mute_changed = is_muted != last_muted;
+            bool volume_really_changed = volume != last_volume;
+
+            last_volume = volume;
+            last_muted = is_muted;
+
+            if (mute_changed) {
+                volume_changed (volume, is_muted);
+            } else if (volume_really_changed && !is_muted) {
                 volume_changed (volume, is_muted);
             }
         }
