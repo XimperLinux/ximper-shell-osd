@@ -20,5 +20,9 @@ namespace XimperShellOsd {
                 );
             }
         }
+
+        public void show_brightness_osd (double percent) throws DBusError, IOError {
+            app.show_osd_external (OsdType.BRIGHTNESS, percent / 100.0, "%d%%".printf ((int) percent));
+        }
     }
 }

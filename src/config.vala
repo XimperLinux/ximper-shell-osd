@@ -6,6 +6,9 @@ namespace XimperShellOsd {
         public int margin_bottom { get; set; default = 80; }
         public int width { get; set; default = 300; }
         public bool monitor_volume { get; set; default = true; }
+        public bool monitor_brightness { get; set; default = true; }
+        public bool monitor_ddc { get; set; default = true; }
+        public int ddc_poll_interval_sec { get; set; default = 5; }
 
         private string config_path;
 
@@ -34,6 +37,12 @@ namespace XimperShellOsd {
                     width = (int) root.get_int_member ("width");
                 if (root.has_member ("monitor_volume"))
                     monitor_volume = root.get_boolean_member ("monitor_volume");
+                if (root.has_member ("monitor_brightness"))
+                    monitor_brightness = root.get_boolean_member ("monitor_brightness");
+                if (root.has_member ("monitor_ddc"))
+                    monitor_ddc = root.get_boolean_member ("monitor_ddc");
+                if (root.has_member ("ddc_poll_interval_sec"))
+                    ddc_poll_interval_sec = (int) root.get_int_member ("ddc_poll_interval_sec");
             } catch (Error e) {
                 warning ("Failed to load OSD config: %s", e.message);
             }

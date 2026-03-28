@@ -2,7 +2,8 @@ namespace XimperShellOsd {
 
     public enum OsdType {
         VOLUME,
-        VOLUME_MUTE;
+        VOLUME_MUTE,
+        BRIGHTNESS;
     }
 
     public class OsdContent : Gtk.Box {
@@ -40,10 +41,16 @@ namespace XimperShellOsd {
         }
 
         public void update (OsdType type, double value, string text, string? icon_name = null) {
-            if (type == OsdType.VOLUME_MUTE) {
-                icon.icon_name = "audio-volume-muted-symbolic";
-            } else {
-                icon.icon_name = icon_name ?? "audio-volume-high-symbolic";
+            switch (type) {
+                case OsdType.VOLUME_MUTE:
+                    icon.icon_name = "audio-volume-muted-symbolic";
+                    break;
+                case OsdType.BRIGHTNESS:
+                    icon.icon_name = icon_name ?? "display-brightness-symbolic";
+                    break;
+                default:
+                    icon.icon_name = icon_name ?? "audio-volume-high-symbolic";
+                    break;
             }
 
             progress.fraction = value.clamp (0.0, 1.0);

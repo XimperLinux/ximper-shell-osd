@@ -1,1 +1,2 @@
 option('pulse-audio', type: 'boolean', value: true, description: 'Monitor PulseAudio volume changes.')
+option('ddc', type: 'boolean', value: true, description: 'Monitor DDC/CI brightness via libddcutil.')

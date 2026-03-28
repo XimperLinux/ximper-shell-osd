@@ -17,6 +17,10 @@ namespace XimperShellOsd {
 #if HAVE_PULSE_AUDIO
         private PulseMonitor? pulse_monitor;
 #endif
+        private BacklightMonitor? backlight_monitor;
+#if HAVE_DDC
+        private DdcMonitor? ddc_monitor;
+#endif
 
         public Application () {
             Object (
@@ -54,11 +58,31 @@ namespace XimperShellOsd {
                     if (is_muted) {
                         osd_window.show_osd (OsdType.VOLUME_MUTE, 0, "Muted");
                     } else {
-                        var icon = get_volume_icon (percent);
-                        osd_window.show_osd (OsdType.VOLUME, percent / 100.0, "%d%%".printf ((int) percent), icon);
+                        osd_window.show_osd (OsdType.VOLUME, percent / 100.0, "%d%%".printf ((int) percent), get_volume_icon (percent));
                     }
                 });
                 pulse_monitor.start ();
+            }
+#endif
+
+            if (config.monitor_brightness) {
+                var device = BacklightMonitor.detect_device ();
+                if (device != null) {
+                    backlight_monitor = new BacklightMonitor (device);
+                    backlight_monitor.brightness_changed.connect ((percent) => {
+                        osd_window.show_osd (OsdType.BRIGHTNESS, percent / 100.0, "%d%%".printf (percent));
+                    });
+                    backlight_monitor.start ();
+                }
+            }
+
+#if HAVE_DDC
+            if (config.monitor_ddc) {
+                ddc_monitor = new DdcMonitor (config.ddc_poll_interval_sec);
+                ddc_monitor.brightness_changed.connect ((percent) => {
+                    osd_window.show_osd (OsdType.BRIGHTNESS, percent / 100.0, "%d%%".printf (percent));
+                });
+                ddc_monitor.start ();
             }
 #endif
 
@@ -76,6 +100,16 @@ namespace XimperShellOsd {
             if (pulse_monitor != null) {
                 pulse_monitor.close ();
                 pulse_monitor = null;
+            }
+#endif
+            if (backlight_monitor != null) {
+                backlight_monitor.close ();
+                backlight_monitor = null;
+            }
+#if HAVE_DDC
+            if (ddc_monitor != null) {
+                ddc_monitor.close ();
+                ddc_monitor = null;
             }
 #endif
             base.shutdown ();

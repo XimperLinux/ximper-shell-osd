@@ -10,6 +10,7 @@ namespace XimperShellOsd {
         private string? default_sink_name;
         private double last_volume = -1;
         private bool last_muted = false;
+        private bool initialized = false;
 
         public signal void volume_changed (double percent, bool is_muted);
 
@@ -99,6 +100,13 @@ namespace XimperShellOsd {
 
             bool is_muted = info.mute == 1;
             double volume = volume_to_double (info.volume.max ());
+
+            if (!initialized) {
+                last_volume = volume;
+                last_muted = is_muted;
+                initialized = true;
+                return;
+            }
 
             if (volume != last_volume || is_muted != last_muted) {
                 last_volume = volume;

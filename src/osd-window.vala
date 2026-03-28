@@ -8,6 +8,10 @@ namespace XimperShellOsd {
         private Adw.TimedAnimation? fade_in_anim;
         private Adw.TimedAnimation? fade_out_anim;
         private bool is_showing = false;
+        private OsdType last_type;
+        private double last_value = -1;
+        private int64 last_show_time = 0;
+        private const int64 DEDUP_WINDOW_US = 500000;
 
         public OsdWindow (Application app) {
             this.app = app;
@@ -34,6 +38,14 @@ namespace XimperShellOsd {
         }
 
         public void show_osd (OsdType type, double value, string label, string? icon_name = null) {
+            int64 now = GLib.get_monotonic_time ();
+            if (type == last_type && value == last_value && (now - last_show_time) < DEDUP_WINDOW_US) {
+                return;
+            }
+            last_type = type;
+            last_value = value;
+            last_show_time = now;
+
             content.update (type, value, label, icon_name);
 
             cancel_hide ();
