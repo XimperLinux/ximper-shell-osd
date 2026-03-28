@@ -11,6 +11,7 @@ namespace XimperShellOsd {
         private Gtk.Image icon;
         private Gtk.ProgressBar progress;
         private Gtk.Label label;
+        private Adw.TimedAnimation? progress_anim;
 
         public OsdContent () {
             Object (
@@ -53,8 +54,21 @@ namespace XimperShellOsd {
                     break;
             }
 
-            progress.fraction = value.clamp (0.0, 1.0);
+            animate_progress (value.clamp (0.0, 1.0));
             label.label = text;
+        }
+
+        private void animate_progress (double target) {
+            if (progress_anim != null) {
+                progress_anim.pause ();
+            }
+
+            var cb = new Adw.CallbackAnimationTarget ((val) => {
+                progress.fraction = val;
+            });
+            progress_anim = new Adw.TimedAnimation (progress, progress.fraction, target, 150, cb);
+            progress_anim.easing = Adw.Easing.EASE_OUT_CUBIC;
+            progress_anim.play ();
         }
     }
 }
