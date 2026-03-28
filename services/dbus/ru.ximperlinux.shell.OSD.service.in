@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=ru.ximperlinux.shell.OSD
+Exec=@bindir@/ximper-shell-osd

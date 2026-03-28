@@ -1,0 +1,16 @@
+.osd-window {
+    background: var(--window-bg-color);
+    color: var(--window-fg-color);
+    border-radius: 999px;
+    padding: 10px 15px;
+}
+
+.osd-progress trough {
+    min-height: 10px;
+    background: alpha(var(--accent-bg-color), 0.2);
+}
+
+.osd-progress trough progress {
+    min-height: 10px;
+    background: var(--accent-bg-color);
+}
